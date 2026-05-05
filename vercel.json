@@ -1,0 +1,13 @@
+{
+  "framework": "nextjs",
+  "buildCommand": "npm run build",
+  "devCommand": "npm run dev",
+  "installCommand": "npm install",
+  "regions": ["bom1"],
+  "env": {
+    "JWT_SECRET": "@jwt_secret",
+    "RAZORPAY_KEY_SECRET": "@razorpay_key_secret",
+    "GMAIL_EMAIL": "@gmail_email",
+    "GMAIL_APP_PASSWORD": "@gmail_app_password"
+  }
+}
