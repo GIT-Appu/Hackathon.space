@@ -6,7 +6,7 @@ import Countdown from '@/components/ui/Countdown';
 import Navbar from '@/components/ui/Navbar';
 
 interface TeamData { id: string; teamName: string; collegeName: string; leaderName: string; members: Array<{name:string;email:string;role:string}>; paymentStatus: string; submissionStatus: string; zipUrl?: string; pdfUrl?: string; videoLink?: string; registeredAt: string; scores?: { innovation:number; relevance:number; technical:number; uiux:number; total:number }; rank?: 1 | 2 | 3; }
-interface Settings { problemRevealEnabled: boolean; problemStatement: string; problemRevealDate: string; submissionDeadline: string; registrationFee: number; }
+interface Settings { problemRevealEnabled: boolean; problemStatement: string; problemRevealDate: string; submissionDeadline: string; registrationFee: number; resultsRevealEnabled: boolean; }
 
 export default function DashboardClient() {
   const router = useRouter();
@@ -74,7 +74,7 @@ export default function DashboardClient() {
             { label: 'Payment', value: team?.paymentStatus === 'paid' ? '✅ Paid' : '⏳ Pending', color: team?.paymentStatus === 'paid' ? 'var(--success)' : 'var(--warning)' },
             { label: 'Submission', value: team?.submissionStatus === 'submitted' ? '✅ Submitted' : '⏳ Pending', color: team?.submissionStatus === 'submitted' ? 'var(--success)' : 'var(--text-muted)' },
             { label: 'Members', value: `${team?.members?.length || 0} / 4`, color: 'var(--purple)' },
-            { label: 'Rank', value: team?.rank ? (team.rank === 1 ? '🥇 1st Place' : team.rank === 2 ? '🥈 2nd Place' : '🥉 3rd Place') : 'TBD', color: team?.rank ? 'var(--orange)' : 'var(--text-muted)' },
+            { label: 'Rank', value: settings?.resultsRevealEnabled && team?.rank ? (team.rank === 1 ? '🥇 1st Place' : team.rank === 2 ? '🥈 2nd Place' : '🥉 3rd Place') : 'TBD', color: settings?.resultsRevealEnabled && team?.rank ? 'var(--orange)' : 'var(--text-muted)' },
           ].map(card => (
             <div key={card.label} className="glass-card" style={{ padding: '20px 24px' }}>
               <p style={{ fontFamily: 'Space Mono', fontSize: 10, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 8 }}>{card.label}</p>

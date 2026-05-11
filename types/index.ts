@@ -39,6 +39,7 @@ export interface HackathonSettings {
   registrationDeadline: string;
   submissionDeadline: string;
   registrationFee: number;
+  resultsRevealEnabled: boolean;
 }
 
 export interface User {

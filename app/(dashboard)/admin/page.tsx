@@ -6,7 +6,7 @@ import toast from 'react-hot-toast';
 import Navbar from '@/components/ui/Navbar';
 
 interface Team { id: string; teamName: string; collegeName: string; leaderName: string; leaderEmail: string; members: Array<{name:string;email:string;role:string}>; paymentStatus: string; submissionStatus: string; zipUrl?: string; pdfUrl?: string; videoLink?: string; submittedAt?: string; registeredAt: string; scores?: {innovation:number;relevance:number;technical:number;uiux:number;total:number}; rank?: number; }
-interface Settings { problemRevealEnabled: boolean; problemStatement: string; problemRevealDate: string; submissionDeadline: string; registrationDeadline: string; registrationFee: number; }
+interface Settings { problemRevealEnabled: boolean; problemStatement: string; problemRevealDate: string; submissionDeadline: string; registrationDeadline: string; registrationFee: number; resultsRevealEnabled: boolean; }
 
 type Tab = 'overview' | 'teams' | 'submissions' | 'scores' | 'control' | 'email';
 
@@ -184,6 +184,24 @@ export default function AdminPage() {
               <div style={{ marginTop: 20, padding: '10px 16px', borderRadius: 8, background: editableSettings.problemRevealEnabled ? 'rgba(34,197,94,0.08)' : 'rgba(255,255,255,0.03)', border: `1px solid ${editableSettings.problemRevealEnabled ? 'rgba(34,197,94,0.2)' : 'var(--border)'}` }}>
                 <p style={{ fontFamily: 'Space Mono', fontSize: 12, color: editableSettings.problemRevealEnabled ? 'var(--success)' : 'var(--text-muted)' }}>
                   {editableSettings.problemRevealEnabled ? '🟢 Problem statement is VISIBLE to participants' : '🔴 Problem statement is HIDDEN from participants'}
+                </p>
+              </div>
+            </div>
+
+            <div className="glass-card" style={{ padding: 32, border: settings?.resultsRevealEnabled ? '1px solid rgba(245,158,11,0.3)' : '1px solid var(--border)' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 20 }}>
+                <div>
+                  <h2 style={{ fontFamily: 'Syne, sans-serif', fontWeight: 700, fontSize: 20, marginBottom: 6 }}>Results Reveal</h2>
+                  <p style={{ color: 'var(--text-secondary)', fontSize: 14 }}>Toggle to reveal/hide final results and rankings to all participants.</p>
+                </div>
+                <label className="toggle">
+                  <input type="checkbox" checked={editableSettings.resultsRevealEnabled || false} onChange={e => setEditableSettings(s => ({ ...s, resultsRevealEnabled: e.target.checked }))} />
+                  <span className="toggle-slider" />
+                </label>
+              </div>
+              <div style={{ marginTop: 20, padding: '10px 16px', borderRadius: 8, background: editableSettings.resultsRevealEnabled ? 'rgba(245,158,11,0.08)' : 'rgba(255,255,255,0.03)', border: `1px solid ${editableSettings.resultsRevealEnabled ? 'rgba(245,158,11,0.2)' : 'var(--border)'}` }}>
+                <p style={{ fontFamily: 'Space Mono', fontSize: 12, color: editableSettings.resultsRevealEnabled ? 'var(--orange)' : 'var(--text-muted)' }}>
+                  {editableSettings.resultsRevealEnabled ? '🏆 Results and rankings are VISIBLE to all participants' : '🔒 Results and rankings are HIDDEN from participants'}
                 </p>
               </div>
             </div>

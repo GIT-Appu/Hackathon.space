@@ -28,6 +28,7 @@ Constraints:
   registrationDeadline: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000).toISOString(),
   submissionDeadline: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
   registrationFee: 200,
+  resultsRevealEnabled: false,
 };
 
 const useSupabase = () => isSupabaseConfigured();
@@ -188,6 +189,7 @@ export const db = {
       'registrationDeadline',
       'submissionDeadline',
       'registrationFee',
+      'resultsRevealEnabled',
     ];
     const filteredUpdates = Object.fromEntries(
       Object.entries(updates).filter(([key]) => validKeys.includes(key as keyof HackathonSettings)),
