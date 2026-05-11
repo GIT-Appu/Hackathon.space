@@ -5,7 +5,7 @@ import toast from 'react-hot-toast';
 import Countdown from '@/components/ui/Countdown';
 import Navbar from '@/components/ui/Navbar';
 
-interface TeamData { id: string; teamName: string; collegeName: string; leaderName: string; members: Array<{name:string;email:string;role:string}>; paymentStatus: string; submissionStatus: string; zipUrl?: string; pdfUrl?: string; videoLink?: string; registeredAt: string; }
+interface TeamData { id: string; teamName: string; collegeName: string; leaderName: string; members: Array<{name:string;email:string;role:string}>; paymentStatus: string; submissionStatus: string; zipUrl?: string; pdfUrl?: string; videoLink?: string; registeredAt: string; scores?: { innovation:number; relevance:number; technical:number; uiux:number; total:number }; rank?: 1 | 2 | 3; }
 interface Settings { problemRevealEnabled: boolean; problemStatement: string; problemRevealDate: string; submissionDeadline: string; registrationFee: number; }
 
 export default function DashboardClient() {
@@ -74,6 +74,7 @@ export default function DashboardClient() {
             { label: 'Payment', value: team?.paymentStatus === 'paid' ? '✅ Paid' : '⏳ Pending', color: team?.paymentStatus === 'paid' ? 'var(--success)' : 'var(--warning)' },
             { label: 'Submission', value: team?.submissionStatus === 'submitted' ? '✅ Submitted' : '⏳ Pending', color: team?.submissionStatus === 'submitted' ? 'var(--success)' : 'var(--text-muted)' },
             { label: 'Members', value: `${team?.members?.length || 0} / 4`, color: 'var(--purple)' },
+            { label: 'Rank', value: team?.rank ? (team.rank === 1 ? '🥇 1st Place' : team.rank === 2 ? '🥈 2nd Place' : '🥉 3rd Place') : 'TBD', color: team?.rank ? 'var(--orange)' : 'var(--text-muted)' },
           ].map(card => (
             <div key={card.label} className="glass-card" style={{ padding: '20px 24px' }}>
               <p style={{ fontFamily: 'Space Mono', fontSize: 10, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 8 }}>{card.label}</p>
@@ -106,8 +107,14 @@ export default function DashboardClient() {
                 </div>
               </div>
               <div style={{ marginTop: 16, padding: 16, background: '#fff', borderRadius: 8, textAlign: 'center' }}>
-                <p style={{ fontFamily: 'Space Mono', fontSize: 11, color: '#666', marginBottom: 8 }}>Scan with any UPI app</p>
-                <div style={{ width: 150, height: 150, background: '#f0f0f0', borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto', fontSize: 48 }}>💳</div>
+                <p style={{ fontFamily: 'Space Mono', fontSize: 11, color: '#666', marginBottom: 8 }}>Tap the button to open your UPI app</p>
+                <a
+                  href="upi://pay?pa=nscientist777@oksbi&pn=Nandagopal&am=200&cu=INR&tn=Mph%20hackathon"
+                  style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', height: 48, minWidth: 240, padding: '0 18px', borderRadius: 9999, background: 'var(--success)', color: '#fff', fontWeight: 700, textDecoration: 'none', boxShadow: '0 10px 30px rgba(34,197,94,0.15)' }}
+                >
+                  Open UPI App to Pay ₹200
+                </a>
+                <div style={{ width: 150, height: 150, background: '#f0f0f0', borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '18px auto 0', fontSize: 48 }}>💳</div>
               </div>
             </div>
 
@@ -155,6 +162,20 @@ export default function DashboardClient() {
             </div>
           )}
         </div>
+
+        {team?.rank ? (
+          <div className="glass-card" style={{ padding: 24, marginBottom: 24, border: '1px solid rgba(249,115,22,0.25)' }}>
+            <h2 style={{ fontFamily: 'Syne, sans-serif', fontWeight: 700, fontSize: 22, marginBottom: 10 }}>🏆 Final Result</h2>
+            <p style={{ color: 'var(--text-secondary)', fontSize: 14, marginBottom: 14 }}>Your team has been placed in the final standings.</p>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 16, flexWrap: 'wrap' }}>
+              <span style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 48, height: 48, borderRadius: '50%', background: 'rgba(249,115,22,0.12)', fontSize: 24 }}> {team.rank === 1 ? '🥇' : team.rank === 2 ? '🥈' : '🥉'} </span>
+              <div>
+                <p style={{ fontFamily: 'Syne, sans-serif', fontWeight: 700, fontSize: 20, marginBottom: 2 }}>{team.rank === 1 ? '1st Place' : team.rank === 2 ? '2nd Place' : '3rd Place'}</p>
+                <p style={{ color: 'var(--text-muted)', fontSize: 13 }}>{team.scores?.total ? `Score: ${team.scores.total} points` : 'Rank assigned by judges.'}</p>
+              </div>
+            </div>
+          </div>
+        ) : null}
 
         {settings?.problemRevealEnabled && team?.paymentStatus === 'paid' && (
           <div className="glass-card" style={{ padding: 32, marginBottom: 24 }}>

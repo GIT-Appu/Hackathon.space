@@ -27,7 +27,6 @@ Constraints:
 - Open source preferred`,
   registrationDeadline: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000).toISOString(),
   submissionDeadline: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
-  hackathonDate: new Date(Date.now() + 6 * 24 * 60 * 60 * 1000).toISOString(),
   registrationFee: 200,
 };
 
@@ -87,7 +86,10 @@ export const db = {
         .eq('id', id)
         .select()
         .single();
-      if (error) throw error;
+      if (error) {
+        if (error.code === 'PGRST116') return null;
+        throw error;
+      }
       return data;
     } else {
       const idx = memoryTeams.findIndex(t => t.id === id);
@@ -179,16 +181,28 @@ export const db = {
   },
 
   async updateSettings(updates: Partial<HackathonSettings>) {
+    const validKeys: Array<keyof HackathonSettings> = [
+      'problemRevealEnabled',
+      'problemRevealDate',
+      'problemStatement',
+      'registrationDeadline',
+      'submissionDeadline',
+      'registrationFee',
+    ];
+    const filteredUpdates = Object.fromEntries(
+      Object.entries(updates).filter(([key]) => validKeys.includes(key as keyof HackathonSettings)),
+    );
+
     if (useSupabase()) {
       const { data, error } = await supabase
         .from('settings')
-        .upsert({ id: 'main', ...updates })
+        .upsert({ id: 'main', ...filteredUpdates })
         .select()
         .single();
       if (error) throw error;
       return data;
     } else {
-      memorySettings = { ...memorySettings, ...updates };
+      memorySettings = { ...memorySettings, ...filteredUpdates };
       return memorySettings;
     }
   },

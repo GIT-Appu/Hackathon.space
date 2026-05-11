@@ -38,7 +38,6 @@ export interface HackathonSettings {
   problemStatement: string;
   registrationDeadline: string;
   submissionDeadline: string;
-  hackathonDate: string;
   registrationFee: number;
 }
 

@@ -96,3 +96,65 @@ export async function sendSubmissionConfirmationEmail(teamName: string, leaderEm
   `;
   return sendEmail(leaderEmail, subject, html);
 }
+
+// Send member invitation email
+export async function sendMemberInvitationEmail(memberName: string, memberEmail: string, teamName: string, leaderName: string, temporaryPassword: string): Promise<{ success: boolean; error?: string }> {
+  const subject = '🍕 You\'ve been invited to Midnight Pizza Hack!';
+  const html = `
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+      <h1>Team Invitation! 🍕</h1>
+      <p>Hey ${memberName},</p>
+      <p><strong>${leaderName}</strong> has added you to team <strong>${teamName}</strong> for Midnight Pizza Hack.</p>
+      <p>You can now log in using:</p>
+      <ul>
+        <li><strong>Email:</strong> ${memberEmail}</li>
+        <li><strong>Password:</strong> ${temporaryPassword}</li>
+      </ul>
+      <p>Log in here: <a href="${process.env.NEXT_PUBLIC_APP_URL || 'https://midnightpizzahack.dev'}/login">${process.env.NEXT_PUBLIC_APP_URL || 'https://midnightpizzahack.dev'}/login</a></p>
+      <p>Your team leader will handle the payment and submission. You can still view the dashboard once you log in.</p>
+      <p>Let's build something amazing! 🌙</p>
+    </div>
+  `;
+  return sendEmail(memberEmail, subject, html);
+}
+
+// Send payment rejection email
+export async function sendPaymentRejectionEmail(teamName: string, leaderEmail: string, leaderName: string): Promise<{ success: boolean; error?: string }> {
+  const subject = '⚠️ Payment Verification Failed - Midnight Pizza Hack';
+  const html = `
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+      <h1>Payment Verification Failed ❌</h1>
+      <p>Hi ${leaderName},</p>
+      <p>Your payment for team <strong>${teamName}</strong> could not be verified.</p>
+      <p><strong>Possible reasons:</strong></p>
+      <ul>
+        <li>Invalid or unclear payment screenshot</li>
+        <li>Incorrect amount or reference</li>
+        <li>Payment already used by another team</li>
+      </ul>
+      <p>Please try submitting again with clear payment proof on your <a href="${process.env.NEXT_PUBLIC_APP_URL || 'https://midnightpizzahack.dev'}/dashboard">dashboard</a>.</p>
+      <p>Contact admin if you have questions!</p>
+      <p>🍕 Code. Eat. Repeat.</p>
+    </div>
+  `;
+  return sendEmail(leaderEmail, subject, html);
+}
+
+// Send admin notification about new registration
+export async function sendAdminRegistrationNotification(teamName: string, leaderName: string, leaderEmail: string, memberCount: number): Promise<{ success: boolean; error?: string }> {
+  const adminEmail = process.env.ADMIN_EMAIL || process.env.GMAIL_EMAIL;
+  if (!adminEmail) return { success: false, error: 'Admin email not configured' };
+
+  const subject = '🍕 New Team Registration - Midnight Pizza Hack';
+  const html = `
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+      <h1>New Team Registration 🍕</h1>
+      <p><strong>Team:</strong> ${teamName}</p>
+      <p><strong>Leader:</strong> ${leaderName} (${leaderEmail})</p>
+      <p><strong>Members:</strong> ${memberCount}</p>
+      <p><strong>Status:</strong> Awaiting payment verification</p>
+      <p>Review in admin panel to verify payments.</p>
+    </div>
+  `;
+  return sendEmail(adminEmail, subject, html);
+}

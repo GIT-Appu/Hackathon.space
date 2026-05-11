@@ -15,6 +15,15 @@ export function generateToken(payload: { id: string; email: string; isAdmin: boo
   return jwt.sign(payload, JWT_SECRET, { expiresIn: '7d' });
 }
 
+export function generateTempPassword(length = 10) {
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789!@#$%^&*()';
+  let password = '';
+  for (let i = 0; i < length; i++) {
+    password += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return password;
+}
+
 export function verifyToken(token: string) {
   try { return jwt.verify(token, JWT_SECRET) as { id: string; email: string; isAdmin: boolean; teamId?: string }; }
   catch { return null; }

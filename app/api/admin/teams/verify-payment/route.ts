@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { requireAdmin } from '@/lib/auth';
 import { db } from '@/lib/db';
+import { sendPaymentConfirmationEmail, sendPaymentRejectionEmail } from '@/lib/email';
 
 export async function POST(req: NextRequest) {
   const admin = await requireAdmin();
@@ -23,6 +24,13 @@ export async function POST(req: NextRequest) {
     paymentStatus: newStatus,
     // paymentVerifiedAt: verified ? new Date().toISOString() : undefined,  // Removed - column doesn't exist in DB
   });
+
+  // Send automated confirmation or rejection email
+  if (verified) {
+    await sendPaymentConfirmationEmail(team.teamName, team.leaderEmail);
+  } else {
+    await sendPaymentRejectionEmail(team.teamName, team.leaderEmail, team.leaderName);
+  }
 
   return NextResponse.json({ 
     success: true, 
