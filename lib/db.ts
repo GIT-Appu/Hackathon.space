@@ -169,13 +169,18 @@ export const db = {
   // ============ SETTINGS ============
   async getSettings() {
     if (useSupabase()) {
-      const { data, error } = await supabase
-        .from('settings')
-        .select('*')
-        .eq('id', 'main')
-        .single();
-      if (error && error.code !== 'PGRST116') throw error;
-      return data || memorySettings;
+      try {
+        const { data, error } = await supabase
+          .from('settings')
+          .select('*')
+          .eq('id', 'main')
+          .single();
+        if (error && error.code !== 'PGRST116') throw error;
+        return data || memorySettings;
+      } catch (error) {
+        console.warn('[DB] Supabase settings fetch failed, using memory mode:', error);
+        return memorySettings;
+      }
     } else {
       return memorySettings;
     }
@@ -196,13 +201,20 @@ export const db = {
     );
 
     if (useSupabase()) {
-      const { data, error } = await supabase
-        .from('settings')
-        .upsert({ id: 'main', ...filteredUpdates })
-        .select()
-        .single();
-      if (error) throw error;
-      return data;
+      try {
+        const { data, error } = await supabase
+          .from('settings')
+          .upsert({ id: 'main', ...filteredUpdates })
+          .select()
+          .single();
+        if (error) throw error;
+        return data;
+      } catch (error) {
+        console.warn('[DB] Supabase settings update failed, falling back to memory mode:', error);
+        // Fall back to memory mode if Supabase fails
+        memorySettings = { ...memorySettings, ...filteredUpdates };
+        return memorySettings;
+      }
     } else {
       memorySettings = { ...memorySettings, ...filteredUpdates };
       return memorySettings;
